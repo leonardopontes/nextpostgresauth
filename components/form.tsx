@@ -6,50 +6,85 @@ import LoadingDots from "@/components/loading-dots";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+// exportar por padrão funcção de Formulário({ tipo }: { tipo: "login" ou "registro" }) {
 export default function Form({ type }: { type: "login" | "register" }) {
+  // [carregar, definir Carregamento] ligando a = uso de Estado(falso);
   const [loading, setLoading] = useState(false);
+  // rota ligando a = uso de Rota();
   const router = useRouter();
 
   return (
     <form
+      // ativar Envio ligando a ={(e) contendo => { 
       onSubmit={(e) => {
+        // e/evitar por padrão();
         e.preventDefault();
+        // definirCarregamento(verdadeiro);
         setLoading(true);
+        // Se (tipo === "login") { for igual valor e tipo
         if (type === "login") {
+          // entrar("credenciais", {
           signIn("credentials", {
+            // redirecionar: falso,
             redirect: false,
+            // email: e.Alvo atual.valor de.email,
             email: e.currentTarget.email.value,
+            // senha: e.Alvo atual.valor de.senha,
             password: e.currentTarget.password.value,
             // @ts-ignore
+          // }).então(({ erro }) contendo => {  
           }).then(({ error }) => {
+            // Se (erro) { for verdade
             if (error) {
+              // definir Carregamento(falso); 
               setLoading(false);
+              // toast.erro(erro);
               toast.error(error);
+            // Se não {  
             } else {
+              // atualizar.rota();
               router.refresh();
+              // puxar.rota("/protected");
               router.push("/protected");
             }
           });
+        // Se não {  
         } else {
+          // buscar("/api/auth/register", {
           fetch("/api/auth/register", {
+            // método: "POST",
             method: "POST",
+            // cabeçalho: {
             headers: {
+              // "Conteúdo-Tipo": "application/json",
               "Content-Type": "application/json",
             },
+            // corpo: restringir.JSON({
             body: JSON.stringify({
+              // email: e.Alvo atual.valor de.email,
               email: e.currentTarget.email.value,
+              // senha: e.Alvo atual.valor de.senha,
               password: e.currentTarget.password.value,
             }),
+          // }).então(assíncrona (resposta) => contendo {  
           }).then(async (res) => {
+            // definirCarregamento(falso);
             setLoading(false);
+            // Se (status.resposta === 200) { for igual valor e tipo
             if (res.status === 200) {
+              // toast.succeso("Conta criada! Redirecionando para login...");
               toast.success("Account created! Redirecting to login...");
+              // definir Tempo esgotado(() contendo => {
               setTimeout(() => {
+                // puxar.rota("/login");
                 router.push("/login");
+              // }, 2000); de tempo
               }, 2000);
+            // Se não {  
             } else {
+              // { erro } ligando a = aguardar resposta.json()
               const { error } = await res.json();
+              // toast.erro(erro);
               toast.error(error);
             }
           });
